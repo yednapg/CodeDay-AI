@@ -1,4 +1,5 @@
-This is a fork of OpenAI's GPT-3 Discord Bot that has been modified to have unlimited memory. I utilized David Shapiro's code with some modifications to achieve this, all credit for this goes to David and others who have done this before me. His code is available here: https://github.com/daveshap/LongtermChatExternalSources 
+This is a fork of OpenAI's GPT-3 Discord Bot that has been modified to have unlimited memory. I utilized David Shapiro's code with some modifications to achieve this, all credit for this goes to David and others who have done this before me. His code is available here: https://github.com/daveshap/LongtermChatExternalSources
+Currently the bot only remembers what you tell it, not what it tells you, I just haven't had time to implement this yet.
 
 In addition to long term memory the bot has been brought out from threads and will talk in regular text channels and does not need / commands. The bot will talk in every channel that it has permission to talk in, including threads, so be mindful of where you put your bot and what permissions it has. All permissions can be modified inside the Discord app. Also, all moderation has been turned off and removed from the code, be careful.
 
