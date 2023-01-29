@@ -25,7 +25,7 @@ This bot uses the [OpenAI Python Library](https://github.com/openai/openai-pytho
     - Enable "Message Content Intent" under "Privileged Gateway Intents"
 1. Go to the OAuth2 tab, copy your "Client ID", and fill in `DISCORD_CLIENT_ID`
 1. Copy the ID the server you want to allow your bot to be used in by right clicking the server icon and clicking "Copy ID". Fill in `ALLOWED_SERVER_IDS`. If you want to allow multiple servers, separate the IDs by "," like `server_id_1,server_id_2`
-2. Create a folder inside the src directory labeled each of the following: chat_logs , memories , notes
+2. Create folders inside the src directory for each of the following: chat_logs , memories , notes (I need to add this into the code but just haven't gotten to it.)
 3. Install dependencies and run the bot
     ```
     pip install -r requirements.txt
