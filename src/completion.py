@@ -12,12 +12,21 @@ import discord
 from src.base import Message, Prompt, Conversation
 from src.utils import split_into_shorter_messages, logger
 from datetime import datetime
-from src.memory import gpt3_response_embedding, save_json
+from src.memory import (
+    gpt3_response_embedding, 
+    save_json,
+    timestamp_to_datetime
+    )
+
 from uuid import uuid4
+from time import time
 
 
 MY_BOT_NAME = BOT_NAME
 MY_BOT_EXAMPLE_CONVOS = EXAMPLE_CONVOS
+
+timestamp = time()
+timestring = timestring = timestamp_to_datetime(timestamp)
 
 
 class CompletionResult(Enum):
@@ -43,7 +52,7 @@ async def generate_completion_response(
                 "System", f"Instructions for {MY_BOT_NAME}: {BOT_INSTRUCTIONS}"
             ),
             examples=MY_BOT_EXAMPLE_CONVOS,
-            convo=Conversation(messages + [Message(MY_BOT_NAME)]),
+            convo=Conversation(messages + [Message(f"{timestring} {MY_BOT_NAME}")]),
         )
         
         rendered = prompt.render()
