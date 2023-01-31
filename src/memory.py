@@ -39,8 +39,8 @@ def gpt3_embedding(message, engine='text-embedding-ada-002'):
     vector = response['data'][0]['embedding']  # this is a normal list
     return vector
 
-def gpt3_response_embedding(reply_text, engine='text-embedding-ada-002'):
-    content = reply_text
+def gpt3_response_embedding(response_data, engine='text-embedding-ada-002'):
+    content = response_data.reply_text
     response = openai.Embedding.create(input=content,engine=engine)
     vector = response['data'][0]['embedding']  # this is a normal list
     return vector
