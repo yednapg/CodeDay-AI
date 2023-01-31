@@ -4,8 +4,6 @@ The bot takes your input and its output and creates embeddings with the 'embeddi
 
 In addition to long term memory the bot has been brought out from threads and will talk in regular text channels and does not need / commands. The bot will talk in every channel that it has permission to talk in, including threads, so be mindful of where you put your bot and what permissions it has. All permissions can be modified inside the Discord app. Also, all moderation has been turned off and removed from the code, be careful.
 
-Example Discord bot written in Python that uses the [completions API](https://beta.openai.com/docs/api-reference/completions) to have conversations with the `text-davinci-003` model, and the [moderations API](https://beta.openai.com/docs/api-reference/moderations) to filter the messages.
-
 This bot uses the [OpenAI Python Library](https://github.com/openai/openai-python) and [discord.py](https://discordpy.readthedocs.io/).
 
 # Features
