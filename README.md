@@ -1,5 +1,6 @@
 This is a fork of OpenAI's GPT-3 Discord Bot that has been modified to have unlimited memory. I utilized David Shapiro's code with some modifications to achieve this, all credit for this goes to David and others who have done this before me. His code is available here: https://github.com/daveshap/LongtermChatExternalSources
-Currently the bot only remembers what you tell it, not what it tells you, I just haven't had time to implement this yet.
+
+The bot takes your input and its output and creates embeddings with the 'embedding-ada-002' model and saves them as logs, each time you message the bot a search returns similar topics from your logs, these memories are summarized and a new embedding is created called notes. Each message you send creates a prompt that is sent to GPT-3, the prompt consists of your original prompt to the bot, a sample conversation, your memory notes, the last five messages in chat and your current message. The bot performs very well, able to recall memories of conversations past, it will timestamp them and this also gives the bot additional capabilities like knowing the current time and date.
 
 In addition to long term memory the bot has been brought out from threads and will talk in regular text channels and does not need / commands. The bot will talk in every channel that it has permission to talk in, including threads, so be mindful of where you put your bot and what permissions it has. All permissions can be modified inside the Discord app. Also, all moderation has been turned off and removed from the code, be careful.
 
