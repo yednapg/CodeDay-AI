@@ -1,124 +1,39 @@
-from enum import Enum
-from dataclasses import dataclass
-import openai
-import json
-from typing import Optional, List
-from src.constants import (
-    BOT_INSTRUCTIONS,
-    BOT_NAME,
-    EXAMPLE_CONVOS,
+from dotenv import load_dotenv
+import os
+import dacite
+import yaml
+from typing import Dict, List
+from src.base import Config
+
+load_dotenv()
+print(os.environ["DISCORD_BOT_TOKEN"])
+
+# load config.yaml
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+CONFIG: Config = dacite.from_dict(
+    Config, yaml.safe_load(open(os.path.join(SCRIPT_DIR, "config.yaml"), "r"))
 )
-import discord
-from src.base import Message, Prompt, Conversation
-from src.utils import split_into_shorter_messages, logger
-from datetime import datetime
-from src.memory import (
-    gpt3_response_embedding, 
-    save_json,
-    timestamp_to_datetime
-    )
 
-from uuid import uuid4
-from time import time
+BOT_NAME = CONFIG.name
+BOT_INSTRUCTIONS = CONFIG.instructions
+EXAMPLE_CONVOS = CONFIG.example_conversations
 
+DISCORD_BOT_TOKEN = os.environ["DISCORD_BOT_TOKEN"]
+DISCORD_CLIENT_ID = os.environ["DISCORD_CLIENT_ID"]
+OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 
-MY_BOT_NAME = BOT_NAME
-MY_BOT_EXAMPLE_CONVOS = EXAMPLE_CONVOS
+ALLOWED_SERVER_IDS: List[int] = []
+server_ids = os.environ["ALLOWED_SERVER_IDS"].split(",")
+for s in server_ids:
+    ALLOWED_SERVER_IDS.append(int(s))
 
+# Send Messages, Send Messages in Threads, Manage Messages, Read Message History
+BOT_INVITE_URL = f"https://discord.com/api/oauth2/authorize?client_id={DISCORD_CLIENT_ID}&permissions=328565073920&scope=bot"
 
-class CompletionResult(Enum):
-    OK = 0
-    TOO_LONG = 1
-    INVALID_REQUEST = 2
-    OTHER_ERROR = 3
-
-
-@dataclass
-class CompletionData:
-    status: CompletionResult
-    reply_text: Optional[str]
-    status_text: Optional[str]
-
-
-async def generate_completion_response(
-    messages: List[Message], user: str
-) -> CompletionData:
-    try:
-        timestamp = time()
-        imestring = timestring = timestamp_to_datetime(timestamp)
-        prompt = Prompt(
-            header=Message(
-                "System", f"Instructions for {MY_BOT_NAME}: {BOT_INSTRUCTIONS}"
-            ),
-            examples=MY_BOT_EXAMPLE_CONVOS,
-            convo=Conversation(messages + [Message(f"{timestring} {MY_BOT_NAME}")]),
-        )
-        
-        rendered = prompt.render()
-        print(rendered)
-        response = openai.Completion.create(
-            engine="text-davinci-003",
-            prompt=rendered,
-            temperature=1.0,
-            top_p=0.9,
-            max_tokens=512,
-            stop=["<|endoftext|>"],
-        )
-        reply = response.choices[0].text.strip()
-
-        return CompletionData(
-            status=CompletionResult.OK, reply_text=reply, status_text=None
-        )
-    except openai.error.InvalidRequestError as e:
-        if "This model's maximum context length" in e.user_message:
-            return CompletionData(
-                status=CompletionResult.TOO_LONG, reply_text=None, status_text=str(e)
-            )
-        else:
-            logger.exception(e)
-            return CompletionData(
-                status=CompletionResult.INVALID_REQUEST,
-                reply_text=None,
-                status_text=str(e),
-            )
-    except Exception as e:
-        logger.exception(e)
-        return CompletionData(
-            status=CompletionResult.OTHER_ERROR, reply_text=None, status_text=str(e)
-        )
-
-
-async def process_response(
-    user: str, channel: discord.TextChannel, response_data: CompletionData
-):
-    status = response_data.status
-    reply_text = response_data.reply_text
-    status_text = response_data.status_text
-    if status is CompletionResult.OK:
-        sent_message = None
-        if not reply_text:
-            sent_message = await channel.send(
-                embed=discord.Embed(
-                    description=f"**Invalid response** - empty response",
-                    color=discord.Color.yellow(),
-                )
-            )
-        else:
-            shorter_response = split_into_shorter_messages(reply_text)
-            for r in shorter_response:
-                sent_message = await channel.send(r)
-
-    elif status is CompletionResult.INVALID_REQUEST:
-        await channel.send(
-            embed=discord.Embed(
-                description=f"**Invalid request** - {status_text}",
-                color=discord.Color.yellow(),
-            )
-        )
-    else:
-        await channel.send(
-            embed=discord.Embed(
-                description=f"**Error** - {status_text}",
-                color=discord.Color.yellow(),
-            )
-        )
+SECONDS_DELAY_RECEIVING_MSG = (
+    3  # give a delay for the bot to respond so it can catch multiple messages
+)
+MAX_MESSAGE_HISTORY = 10
+MAX_CHARS_PER_REPLY_MSG = (
+    1500  # discord has a 2k limit, we just break message into 1.5k
+)
