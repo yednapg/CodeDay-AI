@@ -1,124 +1,160 @@
-from enum import Enum
-from dataclasses import dataclass
+import os
 import openai
 import json
-from typing import Optional, List
-from src.constants import (
-    BOT_INSTRUCTIONS,
-    BOT_NAME,
-    EXAMPLE_CONVOS,
-)
-import discord
-from src.base import Message, Prompt, Conversation
-from src.utils import split_into_shorter_messages, logger
-from datetime import datetime
-from src.memory import (
-    gpt3_response_embedding, 
-    save_json,
-    timestamp_to_datetime
-    )
-
+import numpy as np
+from numpy.linalg import norm
+import re
+from time import time,sleep
 from uuid import uuid4
-from time import time
+from datetime import datetime
 
 
-MY_BOT_NAME = BOT_NAME
-MY_BOT_EXAMPLE_CONVOS = EXAMPLE_CONVOS
+notes_history = []
 
 
-class CompletionResult(Enum):
-    OK = 0
-    TOO_LONG = 1
-    INVALID_REQUEST = 2
-    OTHER_ERROR = 3
+def open_file(filepath):
+    with open(filepath, 'r', encoding='utf-8') as infile:
+        return infile.read()
 
 
-@dataclass
-class CompletionData:
-    status: CompletionResult
-    reply_text: Optional[str]
-    status_text: Optional[str]
+def save_file(filepath, content):
+    with open(filepath, 'w', encoding='utf-8') as outfile:
+        outfile.write(content)
 
 
-async def generate_completion_response(
-    messages: List[Message], user: str
-) -> CompletionData:
+def load_json(filepath):
+    with open(filepath, 'r', encoding='utf-8') as infile:
+        return json.load(infile)
+
+
+def save_json(filepath, payload):
+    with open(filepath, 'w', encoding='utf-8') as outfile:
+        json.dump(payload, outfile, ensure_ascii=False, sort_keys=True, indent=2)
+
+
+def timestamp_to_datetime(unix_time):
+    return datetime.fromtimestamp(unix_time).strftime("%A, %B %d, %Y at %I:%M%p %Z")
+
+
+def gpt3_embedding(message, engine='text-embedding-ada-002'):
+    content = message.content
+    response = openai.Embedding.create(input=content,engine=engine)
+    vector = response['data'][0]['embedding']  # this is a normal list
+    return vector
+
+def gpt3_response_embedding(response_data, engine='text-embedding-ada-002'):
+    content = response_data.reply_text
+    response = openai.Embedding.create(input=content,engine=engine)
+    vector = response['data'][0]['embedding']  # this is a normal list
+    return vector
+
+def gpt3_memory_embedding(content, engine='text-embedding-ada-002'):
+    content = content.encode(encoding='ASCII',errors='ignore').decode()
+    response = openai.Embedding.create(input=content,engine=engine)
+    vector = response['data'][0]['embedding']  # this is a normal list
+    return vector
+
+
+def similarity(v1, v2):
+    # based upon https://stackoverflow.com/questions/18424228/cosine-similarity-between-2-number-lists
+    return np.dot(v1, v2)/(norm(v1)*norm(v2))  # return cosine similarity
+
+
+def fetch_memories(vector, logs, count):
+    scores = list()
+    for i in logs:
+        if vector == i['vector']:
+            # skip this one because it is the same message
+            continue
+        score = similarity(i['vector'], vector)
+        i['score'] = score
+        scores.append(i)
+    ordered = sorted(scores, key=lambda d: d['score'], reverse=True)
     try:
-        timestamp = time()
-        imestring = timestring = timestamp_to_datetime(timestamp)
-        prompt = Prompt(
-            header=Message(
-                "System", f"Instructions for {MY_BOT_NAME}: {BOT_INSTRUCTIONS}"
-            ),
-            examples=MY_BOT_EXAMPLE_CONVOS,
-            convo=Conversation(messages + [Message(f"{timestring} {MY_BOT_NAME}")]),
-        )
-        
-        rendered = prompt.render()
-        print(rendered)
-        response = openai.Completion.create(
-            engine="text-davinci-003",
-            prompt=rendered,
-            temperature=1.0,
-            top_p=0.9,
-            max_tokens=512,
-            stop=["<|endoftext|>"],
-        )
-        reply = response.choices[0].text.strip()
+        ordered = ordered[0:count]
+        return ordered
+    except:
+        return ordered
 
-        return CompletionData(
-            status=CompletionResult.OK, reply_text=reply, status_text=None
-        )
-    except openai.error.InvalidRequestError as e:
-        if "This model's maximum context length" in e.user_message:
-            return CompletionData(
-                status=CompletionResult.TOO_LONG, reply_text=None, status_text=str(e)
-            )
-        else:
-            logger.exception(e)
-            return CompletionData(
-                status=CompletionResult.INVALID_REQUEST,
-                reply_text=None,
-                status_text=str(e),
-            )
-    except Exception as e:
-        logger.exception(e)
-        return CompletionData(
-            status=CompletionResult.OTHER_ERROR, reply_text=None, status_text=str(e)
-        )
+def add_notes(notes):
+    global notes_history
+    notes_history.append(notes)
+    return notes
 
 
-async def process_response(
-    user: str, channel: discord.TextChannel, response_data: CompletionData
-):
-    status = response_data.status
-    reply_text = response_data.reply_text
-    status_text = response_data.status_text
-    if status is CompletionResult.OK:
-        sent_message = None
-        if not reply_text:
-            sent_message = await channel.send(
-                embed=discord.Embed(
-                    description=f"**Invalid response** - empty response",
-                    color=discord.Color.yellow(),
-                )
-            )
-        else:
-            shorter_response = split_into_shorter_messages(reply_text)
-            for r in shorter_response:
-                sent_message = await channel.send(r)
+def load_convo():
+    files = os.listdir('./src/chat_logs')
+    files = [i for i in files if '.json' in i]  # filter out any non-JSON files
+    result = list()
+    for file in files:
+        data = load_json('./src/chat_logs/%s' % file)
+        result.append(data)
+    ordered = sorted(result, key=lambda d: d['timestring'], reverse=False)  # sort them all chronologically
+    return ordered
 
-    elif status is CompletionResult.INVALID_REQUEST:
-        await channel.send(
-            embed=discord.Embed(
-                description=f"**Invalid request** - {status_text}",
-                color=discord.Color.yellow(),
-            )
-        )
-    else:
-        await channel.send(
-            embed=discord.Embed(
-                description=f"**Error** - {status_text}",
-                color=discord.Color.yellow(),
-            )
-        )
+def load_context():
+    files = os.listdir('./src/chat_logs')
+    files = [i for i in files if '.json' in i]  # filter out any non-JSON files
+    result = list()
+    for file in files:
+        data = load_json('./src/chat_logs/%s' % file)
+        result.append(data)
+    ordered = sorted(result, key=lambda d: d['timestring'], reverse=False)  # sort them all chronologically
+    return ordered[-2]
+
+def load_memory():
+    files = os.listdir('./src/notes')
+    files = [i for i in files if '.json' in i]  # filter out any non-JSON files
+    result = list()
+    for file in files:
+        data = load_json('./src/notes/%s' % file)
+        result.append(data)
+    return result
+
+def gpt3_completion(prompt, engine='text-davinci-003', temp=0.0, top_p=1.0, tokens=600, freq_pen=0.0, pres_pen=0.0, stop=['USER:', 'Jarvis:']):
+    max_retry = 5
+    retry = 0
+    prompt = prompt.encode(encoding='ASCII',errors='ignore').decode()
+    while True:
+        try:
+            response = openai.Completion.create(
+                engine=engine,
+                prompt=prompt,
+                temperature=temp,
+                max_tokens=tokens,
+                top_p=top_p,
+                frequency_penalty=freq_pen,
+                presence_penalty=pres_pen,
+                stop=stop)
+            text = response['choices'][0]['text'].strip()
+            text = re.sub('[\r\n]+', '\n', text)
+            text = re.sub('[\t ]+', ' ', text)
+            filename = '%s_gpt3.txt' % time()
+            save_file('./src/memories/%s' % filename, prompt + '\n\n==========\n\n' + text)
+            return text
+        except Exception as oops:
+            retry += 1
+            if retry >= max_retry:
+                return "GPT3 error: %s" % oops
+            print('Error communicating with OpenAI:', oops)
+            sleep(1)
+
+
+def summarize_memories(memories):  # summarize a block of memories into one payload
+    memories = sorted(memories, key=lambda d: d['timestamp'], reverse=False)  # sort them chronologically
+    block = ''
+    identifiers = list()
+    timestamps = list()
+    for mem in memories:
+        block += mem['message'] + '\n\n'
+        identifiers.append(mem['uuid'])
+        timestamps.append(mem['timestamp'])
+    block = block.strip()
+    prompt = open_file('./src/prompt_notes.txt').replace('<<INPUT>>', block)
+    notes = gpt3_completion(prompt)
+    ####   SAVE NOTES
+    vector = gpt3_memory_embedding(block)
+    info = {'notes': notes, 'uuids': identifiers, 'times': timestamps, 'uuid': str(uuid4()), 'vector': vector}
+    filename = 'notes_%s.json' % time()
+    save_json('./src/notes/%s' % filename, info)
+    return notes, vector
