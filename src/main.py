@@ -29,8 +29,12 @@ from src.memory import (
     gpt3_response_embedding, 
     save_json, 
     load_convo,
+    add_notes,
+    notes_history,
     fetch_memories,
     summarize_memories,
+    load_memory,
+    load_context,
     open_file,
     gpt3_completion,
     timestamp_to_datetime
@@ -62,6 +66,7 @@ async def on_ready():
                 messages.append(m)
         completion.MY_BOT_EXAMPLE_CONVOS.append(Conversation(messages=messages))
     await tree.sync()
+
 
 # /chat message:
 @tree.command(name="chat", description="Talk to the bot")
@@ -108,6 +113,7 @@ async def chat_command(int: discord.Interaction, message: str, channel: discord.
         await int.response.send_message(
             f"Failed to start chat {str(e)}", ephemeral=True
         )
+        
 
 # calls for each message
 @client.event
@@ -135,14 +141,37 @@ async def on_message(message: DiscordMessage):
         # load past conversations
         history = load_convo()
 
-        # fetch memories (histroy + current prompt)
-        memories = fetch_memories(vector, history, 10)
+        # fetch memories (histroy + current input)
+
+        memories = fetch_memories(vector, history, 5)
 
         # create notes from memories
-        notes = summarize_memories(memories)
+
+        current_notes, vector = summarize_memories(memories)
+
+        print(current_notes)
+        print('-------------------------------------------------------------------------------')
+
+        add_notes(current_notes)
+
+        if len(notes_history) >= 2:
+            print(notes_history[-2])
+        else:
+            print("The list does not have enough elements to access the second-to-last element.")
+
 
         # create a Message object from the notes
-        message_notes = Message(user='memories', text=notes)
+        message_notes = Message(user='memories', text=current_notes)
+        
+        # create a Message object from the notes_history for context
+
+        context_notes = None
+        
+        if len(notes_history) >= 2:
+            context_notes = Message(user='context', text=notes_history[-2])
+        else:
+            print("The list does not have enough elements create context")
+
 
         # wait a bit in case user has more messages
         if SECONDS_DELAY_RECEIVING_MSG > 0:
@@ -166,6 +195,9 @@ async def on_message(message: DiscordMessage):
         channel_messages = [x for x in channel_messages if x is not None]
         channel_messages.reverse()
         channel_messages.insert(0, message_notes)
+        if context_notes:
+            channel_messages.insert(0, context_notes)
+
 
         # generate the response
         async with channel.typing():
