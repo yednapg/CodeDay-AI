@@ -25,9 +25,6 @@ from time import time
 MY_BOT_NAME = BOT_NAME
 MY_BOT_EXAMPLE_CONVOS = EXAMPLE_CONVOS
 
-timestamp = time()
-timestring = timestring = timestamp_to_datetime(timestamp)
-
 
 class CompletionResult(Enum):
     OK = 0
@@ -47,6 +44,8 @@ async def generate_completion_response(
     messages: List[Message], user: str
 ) -> CompletionData:
     try:
+        timestamp = time()
+        imestring = timestring = timestamp_to_datetime(timestamp)
         prompt = Prompt(
             header=Message(
                 "System", f"Instructions for {MY_BOT_NAME}: {BOT_INSTRUCTIONS}"
