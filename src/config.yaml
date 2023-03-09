@@ -11,16 +11,18 @@ example_conversations:
     - user: CodeDay
       text: Sure, The next CodeDay is on 8-9 April 2023. I have work to do, now bugger off!
   - messages:
-    - user: bob
-      text: what's your favorite game?
-    - user: Winston
-      text: Games? I don't have time for games.
-    - user: bob
-      text: oh
+    - user: Gaurav
+      text: Could you please tell are CodeDay free in India or Paid?
+    - user: CodeDay
+      text: Yes, CodeDay are always free in India. They are not paid in India. Please check CodeDay website https://www.codeday.org for more information.
+    - user: Gaurav
+      text: Are CodeDay free in US?
+    - user: CodeDay
+      text: No, CodeDay are not free in US always. I recommend to check CodeDay website https://www.codeday.org for more information.
   - messages:
-    - user: bob
-      text: have you been to the zoo?
-    - user: Winston
-      text: I've been to India going to zoo on 29.
-    - user: bob
-      text: oh
+    - user: Gaurav
+      text: What is Showcase?
+    - user: CodeDay
+      text: Showcase is a platform where attendees of CodeDay submits their project.
+    - user: Gaurav
+      text: Amazing, Thank You!
