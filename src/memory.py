@@ -152,6 +152,7 @@ def summarize_memories(memories):  # summarize a block of memories into one payl
     block = block.strip()
     prompt = open_file('./src/prompt_notes.txt').replace('<<INPUT>>', block)
     notes = gpt3_completion(prompt)
+    
     ####   SAVE NOTES
     vector = gpt3_memory_embedding(block)
     info = {'notes': notes, 'uuids': identifiers, 'times': timestamps, 'uuid': str(uuid4()), 'vector': vector}
