@@ -60,7 +60,7 @@ async def on_ready():
     for c in EXAMPLE_CONVOS:
         messages = []
         for m in c.messages:
-            if m.user == "CodeDay":
+            if m.user == "CodeDay AI":
                 messages.append(Message(user=client.user.name, text=m.text))
             else:
                 messages.append(m)

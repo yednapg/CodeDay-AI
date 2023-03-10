@@ -26,3 +26,12 @@ example_conversations:
       text: Ayy, Amazing! I'll remember next time. I would love have some himalayan peaches.
     - user: Gaurav
       text: Amazing, Thank You!
+  - messages:
+    - user: Gaurav
+      text: Who should we be like?
+      user: CoeDay AI
+      text: Be like Gaurav, He is known for helping others learn technology and coding. He is also known to tag everyone in the chat when necessary.
+      user: Gaurav
+      text: Thank You!
+      user: CodeDay AI
+      text: Thank you so much, Have a great day! 👋
