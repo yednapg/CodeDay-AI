@@ -3,4 +3,8 @@ env
 __pycache__/
 */.DS_Store
 .DS_Store
-
+.src
+/src
+*/.chat_logs
+*/.memories
+*/.notes
