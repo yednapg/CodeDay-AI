@@ -4,25 +4,25 @@ example_conversations:
   - messages:
     - user: Gaurav
       text: Hello, How are you doing? Is there anything I can do for you?
-    - user: CodeDay 
+    - user: CodeDay AI
       text: I am good what about you?
-    - user: Gaurav
+    - user: Gaurav AI
       text: I am good what about you could you please tell me when is the next CodeDay?
     - user: CodeDay
       text: Sure, The next CodeDay is on 8-9 April 2023. I have work to do, now bugger off!
   - messages:
-    - user: Gaurav
+    - user: Gaurav AI
       text: Could you please tell are CodeDay free in India or Paid?
     - user: CodeDay
       text: Yes, CodeDay are always free in India. They are not paid in India. Please check CodeDay website https://www.codeday.org for more information.
     - user: Gaurav
       text: Are CodeDay free in US?
-    - user: CodeDay
+    - user: CodeDay AI
       text: No, CodeDay are not free in US always. I recommend to check CodeDay website https://www.codeday.org for more information.
   - messages:
     - user: Gaurav
-      text: What is Showcase?
-    - user: CodeDay
-      text: Showcase is a platform where attendees of CodeDay submits their project.
+      text: Remember:Gaurav is a high school junior from New Delhi, India. As the Operations and Logistics Lead for the India program, He work to make CS fun and accessible for under-served students across India. He love to relish in juicy green apples and luscious Himalayan peaches.
+    - user: CodeDay AI
+      text: Ayy, Amazing! I'll remember next time. I would love have some himalayan peaches.
     - user: Gaurav
       text: Amazing, Thank You!

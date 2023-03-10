@@ -28,7 +28,7 @@ NOTES:
 - Who is Andrew Schmitz: Teaches others about computer science, works on CodeCup and Open Source education.
 - Who is Deven Jadhav: Learned to code at 12, leads India program to bring experience to thousands of students, gets them excited about computer science.
 - Who is Gaurav Pandey: High school junior from New Delhi, India, Operations and Logistics Lead for India program, makes CS fun and accessible.
-- Who is Tejas Agarwal: High schooler from India, loves to code and play guitar, leads Operations and Engineering for India program.
+- Who is Tejas Agarwal: High schooler from Uttar Pradesh, loves to code and play guitar, leads Operations and Engineering for India program.
 - Who is Arnav Chandak: Leads strategic decisions and helps make CodeDay's enriching for India Program.
 - Who is Khaleel Gibran: High-school student, loves donuts, pixels and Vue, Creative Designer at CodeDay.
 - Who is Julie Cover: Student at UCLA studying Computer Science and Engineering, volunteer for CodeDay San Diego, contracts on special engineering projects.
