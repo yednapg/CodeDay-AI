@@ -8,7 +8,7 @@ This bot uses the [OpenAI Python Library](https://github.com/openai/openai-pytho
 
 # Features
 
-- The model will generate a reply for every user message in any thread or text channel it has access to
+- The model will generate a reply when it's tagged in any thread or text channel it has access to
 - The past 5 messages and any history relating to the topic will be passed to GPT-3 with every message
 - you can customize the bot instructions by modifying `config.yaml`
 - you can change the model, the hardcoded value is `text-davinci-003`, the bot also uses 'embeddings-ada-002' for saving its memory
@@ -34,7 +34,7 @@ This bot uses the [OpenAI Python Library](https://github.com/openai/openai-pytho
 
 # FAQ
 
-> Why isn't my bot responding to commands?
+**Why isn't my bot responding to commands?**
 
 Ensure that the channels your bots have access to allow the bot to have these permissions.
 - Send Messages
