@@ -1,3 +1,4 @@
+# CodeDay AI
 This is a fork of OpenAI's GPT-3 Discord Bot that has been modified to have unlimited memory. I utilized David Shapiro's code with some modifications to achieve this, all credit for this goes to David and others who have done this before me. His code is available here: https://github.com/daveshap/LongtermChatExternalSources
 
 The bot takes your input and its output and creates embeddings with the 'embedding-ada-002' model and saves them as logs, each time you message the bot a search returns similar topics from your logs, these memories are summarized and a new embedding is created called notes. Each message you send creates a prompt that is sent to GPT-3, the prompt consists of your original prompt to the bot, a sample conversation, your memory notes, the last five messages in chat and your current message. The bot performs very well, able to recall memories of conversations past, it will timestamp them and this also gives the bot additional capabilities like knowing the current time and date.
@@ -8,7 +9,7 @@ This bot uses the [OpenAI Python Library](https://github.com/openai/openai-pytho
 
 # Features
 
-- The model will generate a reply for every user message in any thread or text channel it has access to
+- The model will generate a reply when it's tagged in any thread or text channel it has access to
 - The past 5 messages and any history relating to the topic will be passed to GPT-3 with every message
 - you can customize the bot instructions by modifying `config.yaml`
 - you can change the model, the hardcoded value is `text-davinci-003`, the bot also uses 'embeddings-ada-002' for saving its memory
@@ -31,10 +32,14 @@ This bot uses the [OpenAI Python Library](https://github.com/openai/openai-pytho
     python -m src.main
     ```
     You should see an invite URL in the console. Copy and paste it into your browser to add the bot to your server.
+    
+# Deploy
+
+I am using fly.io to deploy this bot for free.
 
 # FAQ
 
-> Why isn't my bot responding to commands?
+**Why isn't my bot responding to commands?**
 
 Ensure that the channels your bots have access to allow the bot to have these permissions.
 - Send Messages
