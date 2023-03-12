@@ -1,4 +1,4 @@
-# fly.toml file generated for codeday-ai-bot on 2023-03-09T17:09:59+05:30
+# fly.toml file generated for codeday-ai-bot on 2023-03-12T10:23:03+05:30
 
 app = "codeday-ai-bot"
 kill_signal = "SIGINT"
@@ -6,7 +6,6 @@ kill_timeout = 5
 primary_region = "sin"
 processes = []
 
-[env]
-
 [experimental]
+  allowed_public_ports = []
   auto_rollback = true

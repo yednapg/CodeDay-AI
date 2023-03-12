@@ -3,3 +3,4 @@ python-dotenv==1.0.0
 openai==0.27.2
 PyYAML==6.0
 dacite==1.8.0
+numpy==1.24.2
