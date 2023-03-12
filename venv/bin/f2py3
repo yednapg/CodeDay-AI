@@ -1,4 +1,4 @@
-#!/Users/gp/developer/GPT-3-Discord-Bot-Long-Term-Memory/venv/bin/python3
+#!/Users/gp/Developer/CodeDay-AI/venv/bin/python3.10
 # -*- coding: utf-8 -*-
 import re
 import sys
