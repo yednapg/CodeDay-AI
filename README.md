@@ -14,6 +14,15 @@ This bot uses the [OpenAI Python Library](https://github.com/openai/openai-pytho
 - you can customize the bot instructions by modifying `config.yaml`
 - you can change the model, the hardcoded value is `text-davinci-003`, the bot also uses 'embeddings-ada-002' for saving its memory
 
+```python
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",  # The name of the OpenAI chatbot model to use
+        messages=message_log,   # The conversation history up to this point, as a list of dictionaries
+        max_tokens=3800,        # The maximum number of tokens (words or subwords) in the generated response
+        stop=None,              # The stopping sequence for the generated response, if any (not used here)
+        temperature=0.7,        # The "creativity" of the generated response (higher temperature = more creative)
+    )
+```
 # Setup
 
 1. Copy `.env.example` to `.env` and start filling in the values as detailed below (make sure .env is .env and not .env.txt)

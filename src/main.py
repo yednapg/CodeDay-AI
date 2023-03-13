@@ -151,7 +151,6 @@ async def on_message(message: DiscordMessage):
             current_notes, vector = summarize_memories(memories)
 
             print(current_notes)
-            print('-------------------------------------------------------------------------------')
 
             add_notes(current_notes)
 
