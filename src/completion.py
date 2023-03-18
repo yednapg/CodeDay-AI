@@ -56,15 +56,23 @@ async def generate_completion_response(
         
         rendered = prompt.render()
         print(rendered)
-        response = openai.Completion.create(
-            engine="text-davinci-003",
-            prompt=rendered,
-            temperature=1.0,
-            top_p=0.9,
-            max_tokens=512,
-            stop=["<|endoftext|>"],
-        )
-        reply = response.choices[0].text.strip()
+        #response = openai.Completion.create(
+            #model="text-davinci-003",
+            #message=rendered,
+            #temperature=1.0,
+            #top_p=0.9,
+            #max_tokens=512,
+            #stop=["<|endoftext|>"],
+            
+         # You can rollback to using text-davincini-003 by swapping the active "response =" and "reply ="
+
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "system", "content": rendered}])
+
+        #reply = response.choices[0].text.strip()
+        
+        reply = response.choices[0].message['content'].strip()
 
         return CompletionData(
             status=CompletionResult.OK, reply_text=reply, status_text=None
