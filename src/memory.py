@@ -111,7 +111,7 @@ def load_memory():
         result.append(data)
     return result
 
-def gpt3_completion(prompt, engine='text-davinci-003', temp=0.0, top_p=1.0, tokens=600, freq_pen=0.0, pres_pen=0.0, stop=['USER:', 'Jarvis:']):
+def gpt3_completion(prompt, engine='text-curie-001', temp=0.0, top_p=1.0, tokens=600, freq_pen=0.0, pres_pen=0.0, stop=['USER:', 'Jarvis:']):
     max_retry = 5
     retry = 0
     prompt = prompt.encode(encoding='ASCII',errors='ignore').decode()
