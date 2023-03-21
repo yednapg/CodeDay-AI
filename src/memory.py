@@ -111,22 +111,17 @@ def load_memory():
         result.append(data)
     return result
 
-def gpt3_completion(prompt, engine='text-curie-001', temp=0.0, top_p=1.0, tokens=600, freq_pen=0.0, pres_pen=0.0, stop=['USER:', 'Jarvis:']):
+def gpt3_completion(prompt, engine='gpt-3.5-turbo', temp=0.0, top_p=1.0, tokens=600, freq_pen=0.0, pres_pen=0.0, stop=['USER:', 'Jarvis:']):
     max_retry = 5
     retry = 0
     prompt = prompt.encode(encoding='ASCII',errors='ignore').decode()
     while True:
         try:
-            response = openai.Completion.create(
-                engine=engine,
-                prompt=prompt,
-                temperature=temp,
-                max_tokens=tokens,
-                top_p=top_p,
-                frequency_penalty=freq_pen,
-                presence_penalty=pres_pen,
-                stop=stop)
-            text = response['choices'][0]['text'].strip()
+            response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "system", "content": prompt}])
+                
+            text = response.choices[0].message['content'].strip()
             text = re.sub('[\r\n]+', '\n', text)
             text = re.sub('[\t ]+', ' ', text)
             filename = '%s_gpt3.txt' % time()
