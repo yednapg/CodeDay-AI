@@ -12,7 +12,7 @@ This bot uses the [OpenAI Python Library](https://github.com/openai/openai-pytho
 - The model will generate a reply when it's tagged in any thread or text channel it has access to
 - The past 5 messages and any history relating to the topic will be passed to GPT-3 with every message
 - you can customize the bot instructions by modifying `config.yaml`
-- you can change the model, the hardcoded value is `text-davinci-003`, the bot also uses 'embeddings-ada-002' for saving its memory
+- you can change the model, the hardcoded value is `gpt-4`, the bot also uses 'embeddings-ada-002' for saving its memory
 
 ```python
     response = openai.ChatCompletion.create(

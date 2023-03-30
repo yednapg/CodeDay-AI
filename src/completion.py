@@ -13,7 +13,7 @@ from src.base import Message, Prompt, Conversation
 from src.utils import split_into_shorter_messages, logger
 from datetime import datetime
 from src.memory import (
-    gpt3_response_embedding, 
+    gpt4_response_embedding, 
     save_json,
     timestamp_to_datetime
     )
@@ -59,7 +59,7 @@ async def generate_completion_response(
         response = openai.Completion.create(
             engine="text-davinci-003",
             prompt=rendered,
-            temperature=1.0,
+            temperature=0.5,
             top_p=0.9,
             max_tokens=512,
             stop=["<|endoftext|>"],

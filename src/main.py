@@ -25,8 +25,8 @@ from src.utils import (
 from src import completion
 from src.completion import generate_completion_response, process_response
 from src.memory import (
-    gpt3_embedding,
-    gpt3_response_embedding, 
+    gpt4_embedding,
+    gpt4_response_embedding, 
     save_json, 
     load_convo,
     add_notes,
@@ -36,7 +36,7 @@ from src.memory import (
     load_memory,
     load_context,
     open_file,
-    gpt3_completion,
+    gpt4_completion,
     timestamp_to_datetime
 )
 
@@ -130,7 +130,7 @@ async def on_message(message: DiscordMessage):
         
         if client.user in message.mentions:
             # save message as embedding, vectorize
-            vector = gpt3_embedding(message)
+            vector = gpt4_embedding(message)
             timestamp = time()
             timestring = timestring = timestamp_to_datetime(timestamp)
             user = message.author.name
@@ -204,7 +204,7 @@ async def on_message(message: DiscordMessage):
                 response_data = await generate_completion_response(
                     messages=channel_messages, user=message.author
                 )
-                vector = gpt3_response_embedding(response_data)
+                vector = gpt4_response_embedding(response_data)
                 timestamp = time()
                 timestring = timestring = timestamp_to_datetime(timestamp)
                 user = client.user.name
